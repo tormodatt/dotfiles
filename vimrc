@@ -15,7 +15,8 @@ endif
 
 " ================ General Config ====================
 
-set number                      "Line numbers are good
+set number
+set relativenumber              "Line numbers are good
 set backspace=indent,eol,start  "Allow backspace in insert mode
 set history=1000                "Store lots of :cmdline history
 set showcmd                     "Show incomplete cmds down the bottom
@@ -36,7 +37,7 @@ syntax on
 " That means all \x commands turn into ,x
 " The mapleader has to be set before vundle starts loading all 
 " the plugins.
-let mapleader=","
+let mapleader=" "
 
 " =============== Vundle Initialization ===============
 " This loads all the plugins specified in ~/.vim/vundles.vim
@@ -90,7 +91,7 @@ set linebreak    "Wrap lines at convenient points
 " ================ Folds ============================
 
 set foldmethod=indent   "fold based on indent
-set foldnestmax=3       "deepest fold is 3 levels
+set foldnestmax=1       "deepest fold is 3 levels
 "set nofoldenable        "dont fold by default
 
 " ================ Completion =======================
@@ -123,6 +124,9 @@ set ignorecase      " Ignore case when searching...
 set smartcase       " ...unless we type a capital
 
 " ================ Custom Settings ========================
+let mapleader = " " " You only have 1000ms (by default) to hit the next key
+
+
 " Checks if "vim --version" has +clipboard. Otherwise unset line numbers
 " when before marking text
 if has("clipboard")
@@ -132,10 +136,17 @@ if has("clipboard")
     if has("unnamedplus") " X11 support
         set clipboard+=unnamedplus
     endif
+else
+    vmap <Leader>d :!pbcopy<CR>
+    vmap <Leader>y :w !pbcopy<CR><CR>
+    vmap <Leader>p :r !pbpaste<CR><CR>
 endif
 
+
+
+
 " Go to pastemode
-set pastetoggle=<F10>
+set pastetoggle=<F10> " First insert mode, then toggle paste
 
 " ================ Commands ========================
 " No linenumbers
@@ -146,3 +157,41 @@ set pastetoggle=<F10>
 "
 " Use tabs
 " :se noet
+"
+"
+" ctrl - o : interrupts insertmode, to do exactly one normal command before
+" returning
+
+" https://stackoverflow.com/questions/1737163/traversing-text-in-insert-mode
+"
+"
+" ================= Plugins ===================
+" Plug 'scrooloose/nerdtree'                file explorer
+" Plug 'jistr/vim-nerdtree-tabs'            set all tabs with NERDTree
+" Plug 'tpope/vim-commentary'               comment/uncomment
+" Plug 'tpope/vim-fugitive'                 git! http://vimcasts.org/episodes/fugitive-vim---a-complement-to-command-line-git/
+" Plug 'vim-airline/vim-airline'            statusbar/tabline
+" Plug 'vim-airline/vim-airline-themes'
+" Plug 'airblade/vim-gitgutter'             git added/removed sign. undo? not unstage
+" Plug 'vim-scripts/grep.vim'               grep (search)
+" Plug 'vim-scripts/CSApprox'               colorsheme
+" Plug 'bronson/vim-trailing-whitespace'    redcolor trailing whitespace, and fix
+" Plug 'Raimondi/delimitMate'               autoclose paranthesis and brackets
+" Plug 'majutsushi/tagbar'                  method-overview
+" Plug 'scrooloose/syntastic'               syntax check
+" Plug 'Yggdroot/indentLine'                lines for indents
+" Plug 'avelino/vim-bootstrap-updater'      
+" Plug 'sheerun/vim-polyglot'               language packs
+"
+"
+" Plug 'junegunn/fzf'                       search
+" Plug 'Shougo/vimproc.vim'                 asynchronous execution library whatever that means
+"
+" Plug 'xolox/vim-misc'                     speed
+" Plug 'xolox/vim-session'                  save sessions
+" Plug 'Shougo/vimshell.vim'                shell, discontinued
+" Plug 'SirVer/ultisnips'                   auto add class def etc.
+" Plug 'honza/vim-snippets'                 more snippets
+" Plug 'tomasr/molokai'                     nice colorscheme
+"
+" A lot of language plugins

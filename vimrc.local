@@ -1,0 +1,7 @@
+" Configuration on top of bootstrap-vim
+"
+" CHEATSHEET
+" :Note
+"
+Plug 'xolox/vim-notes'      " Notes
+
