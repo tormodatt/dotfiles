@@ -1,7 +1,35 @@
 " Configuration on top of bootstrap-vim
 "
 " CHEATSHEET
-" :Note
+" :Note cheatsheet
 "
-Plug 'xolox/vim-notes'      " Notes
+
+" General
+
+let mapleader = ' ' " does not seem to work
+let maplocalleader = ' '
+set relativenumber " slow???
+
+" vimtex
+let g:vimtex_fold_enabled = 1
+let g:vimtex_indent_enabled = 1
+let g:vimtex_view_method = 'skim' " does not seem to work
+
+if !exists('g:neocomplete#sources#omni#input_patterns')
+  let g:neocomplete#sources#omni#input_patterns = {}
+endif
+let g:neocomplete#sources#omni#input_patterns.tex =
+    \ g:vimtex#re#neocomplete
+
+" tagbar
+nmap <F8> :TagbarToggle<CR>
+
+" fix-whitespace
+nmap <Leader>fw :FixWhitespace<CR>
+nmap <Leader>sm :SyntasticToggleMode<CR>
+
+" snippets
+let g:UltiSnipsExpandTrigger="<F5>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 

@@ -1,0 +1,6 @@
+"*****************************************************************************
+"" Plug user install packages
+"*****************************************************************************
+"
+Plug 'xolox/vim-notes'      " Notes
+Plug 'lervag/vimtex'        " Latex requires vim with client-server, and latexmk (included in MacTex)

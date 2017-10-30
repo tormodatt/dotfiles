@@ -1,0 +1,8 @@
+
+# Vim
+brew install vim --with-clientserver --with-client-server --override-system-vim
+curl 'http://vim-bootstrap.com/generate.vim' --data 'langs=go&langs=python&langs=c&langs=javascript&langs=php&langs=html&langs=ruby&editor=vim' > ~/.vimrc
+
+
+
+brew cask install mactex #includes latexmk which are needed for compiling of latex
