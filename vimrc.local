@@ -15,12 +15,6 @@ let g:vimtex_fold_enabled = 1
 let g:vimtex_indent_enabled = 1
 let g:vimtex_view_method = 'skim' " does not seem to work
 
-if !exists('g:neocomplete#sources#omni#input_patterns')
-  let g:neocomplete#sources#omni#input_patterns = {}
-endif
-let g:neocomplete#sources#omni#input_patterns.tex =
-    \ g:vimtex#re#neocomplete
-
 " tagbar
 nmap <F8> :TagbarToggle<CR>
 
@@ -33,3 +27,6 @@ let g:UltiSnipsExpandTrigger="<F5>"
 let g:UltiSnipsJumpForwardTrigger="<c-b>"
 let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
+" notes
+:let g:notes_directories = ['~/Documents/Notes']
+:let g:notes_suffix = '.md'

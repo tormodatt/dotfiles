@@ -1,197 +1,190 @@
-" ================ Documentation ====================
-" Recomendations
-" - get vim installed with +clipboard
+"===================================================
+" Vim config for Tormod Alf Try Tufteland
+"
+" TODO:
+" - make non-clipboard compatible
+" - make linux compatible
+" - make ssh friendly
+"
+"# =================== asdf =====================
 
+let mapleader=' '       "need to be set before other keymapping
+let maplocalleader=' '
 
-" Use Vim settings, rather then Vi settings (much better!).
-" This must be first, because it changes other options as a side effect.
-set nocompatible
+"# =================== Plugins =====================
+"
+" REQUIRES powline-fonts installed
 
-" TODO: this may not be in the correct place. It is intended to allow overriding <Leader>.
-" source ~/.vimrc.before if it exists.
-if filereadable(expand("~/.vimrc.before"))
-  source ~/.vimrc.before
+let vimplug_exists=expand('~/.vim/autoload/plug.vim')
+if !filereadable(vimplug_exists)
+  echo 'Installing Vim-Plug...'
+  echo ''
+  silent !\curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 endif
 
-" ================ General Config ====================
+call plug#begin('~/.vim/plugged')
+" Visual
+Plug 'vim-airline/vim-airline'                          " powerline
+Plug 'vim-airline/vim-airline-themes'
+Plug 'majutsushi/tagbar'                                " class/function overview
+Plug 'airblade/vim-gitgutter'                           " show git diff in the 'gutter'
+Plug 'Yggdroot/indentLine'                              " show a line at indents
+Plug 'morhetz/gruvbox'					" color theme
 
-set number
-set relativenumber              "Line numbers are good
-set backspace=indent,eol,start  "Allow backspace in insert mode
-set history=1000                "Store lots of :cmdline history
-set showcmd                     "Show incomplete cmds down the bottom
-set showmode                    "Show current mode down the bottom
-set gcr=a:blinkon0              "Disable cursor blink
-set visualbell                  "No sounds
-set autoread                    "Reload files changed outside vim
+" Writing efficiency
+Plug 'bronson/vim-trailing-whitespace'                  " show and remove trailing whitespace
+Plug 'Raimondi/delimitMate'                             " delimiters
+Plug 'tpope/vim-commentary'                             " comment/uncomment
 
-" This makes vim act like all other editors, buffers can
-" exist in the background without being in a window.
-" http://items.sjbach.com/319/configuring-vim-right
-set hidden
+" Vim enhancement
+" Plug 'Shougo/vimproc.vim', {'do': 'make'}             " async exec library for vim
 
-"turn on syntax highlighting
+
+" Misc
+Plug 'xolox/vim-misc'                                  " required for vim-notes
+Plug 'xolox/vim-notes'                                 " notes
+
+" Language
+Plug 'sheerun/vim-polyglot'                            " solid language pack
+Plug 'scrooloose/syntastic'                            " syntax check
+"Plug 'lervag/vimtex'        " requires vim with client-server, and latexmk (included in MacTex)
+"
+"
+"
+"
+" Languages
+" Latex
+"
+" Test these
+"Plug 'tpope/vim-fugitive'                              " git wrapper
+"Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+"junegunn/fzf
+"tpope/vim-unimpaired
+
+call plug#end()
+
+
+
+"# =================== Plugin specific =====================
+" config and keymappings
+"
+"## Gruvebox
+colorscheme gruvbox
+let g:gruvbox_contrast_dark = 'soft' " does it work?
+
+"## NERDTree
+noremap <F3> :NERDTreeToggle<CR>
+
+"## Airline
+let g:airline_powerline_fonts = 1
+"might want to disable airline.tagbar extention for speed
+
+"## Notes
+:let g:notes_directories = ['~/Documents/Notes']
+:let g:notes_suffix = '.md'
+
+"## Whitespace
+nmap <Leader>fw :FixWhitespace<CR>
+
+"## Syntastic
+nmap <Leader>sm :SyntasticToggleMode<CR>
+
+"## Tagbar
+nmap <F8> :TagbarToggle<CR>
+let g:tagbar_autofocus = 1
+
+"## Vimtex
+let g:vimtex_fold_enabled = 1
+let g:vimtex_indent_enabled = 1
+
+"## Indentline
+let g:indentLine_enabled = 1
+let g:indentLine_concealcursor = 0
+let g:indentLine_char = '@'    "'┆'
+let g:indentLine_faster = 1
+
+"# =================== Visual =====================
+"
 syntax on
+set number
+set relativenumber
 
-" Change leader to a comma because the backslash is too far away
-" That means all \x commands turn into ,x
-" The mapleader has to be set before vundle starts loading all 
-" the plugins.
-let mapleader=" "
-
-" =============== Vundle Initialization ===============
-" This loads all the plugins specified in ~/.vim/vundles.vim
-" Use Vundle plugin to manage all other plugins
-if filereadable(expand("~/.vim/vundles.vim"))
-  source ~/.vim/vundles.vim
-endif
-au BufNewFile,BufRead *.vundle set filetype=vim
-
-" ================ Turn Off Swap Files ==============
-
-set noswapfile
-set nobackup
-set nowb
-
-" ================ Persistent Undo ==================
-" Keep undo history across sessions, by storing in file.
-" Only works all the time.
-if has('persistent_undo') && !isdirectory(expand('~').'/.vim/backups')
-  silent !mkdir ~/.vim/backups > /dev/null 2>&1
-  set undodir=~/.vim/backups
-  set undofile
-endif
-
-" ================ Indentation ======================
-
-" Only do this part when compiled with support for autocommands.
-if has("autocmd")
-    " Use filetype detection and file-based automatic indenting.
-    filetype plugin indent on
-
-    " Use actual tab chars in Makefiles.
-    autocmd FileType make set tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
-endif
-
-" For everything else, use a tab width of 4 space chars.
-set tabstop=4       " The width of a TAB is set to 4.
-                    " Still it is a \t. It is just that
-                    " Vim will interpret it to be having
-                    " a width of 4.
-set shiftwidth=4    " Indents will have a width of 4.
-set softtabstop=4   " Sets the number of columns for a TAB.
-set expandtab       " Expand TABs to spaces.
-
-" Display tabs and trailing spaces visually
-set list listchars=tab:\ \ ,trail:·
-
-set nowrap       "Don't wrap lines
-set linebreak    "Wrap lines at convenient points
-
-" ================ Folds ============================
-
-set foldmethod=indent   "fold based on indent
-set foldnestmax=1       "deepest fold is 3 levels
-"set nofoldenable        "dont fold by default
-
-" ================ Completion =======================
-
-set wildmode=list:longest
-set wildmenu                "enable ctrl-n and ctrl-p to scroll thru matches
-set wildignore=*.o,*.obj,*~ "stuff to ignore when tab completing
-set wildignore+=*vim/backups*
-set wildignore+=*sass-cache*
-set wildignore+=*DS_Store*
-set wildignore+=vendor/rails/**
-set wildignore+=vendor/cache/**
-set wildignore+=*.gem
-set wildignore+=log/**
-set wildignore+=tmp/**
-set wildignore+=*.png,*.jpg,*.gif
-
+"# =================== Keymappings =====================
 "
-" ================ Scrolling ========================
+" NOTE! Set plugin specific keymappings in the 'Plugins specific'-section
+"
+"" Vmap for maintain Visual Mode after shifting > and <
+vmap < <gv
+vmap > >gv
 
-set scrolloff=8         "Start scrolling when we're 8 lines away from margins
-set sidescrolloff=15
-set sidescroll=1
+"" Move visual block
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
 
-" ================ Search ===========================
+" Automatically jump to end of pasted text
+vnoremap <silent> y y`]
+vnoremap <silent> p p`]
+nnoremap <silent> p p`]
 
-set incsearch       " Find the next match as we type the search
-set hlsearch        " Highlight searches by default
-set ignorecase      " Ignore case when searching...
-set smartcase       " ...unless we type a capital
+"" Copy/paste
+set clipboard=unnamed,unnamedplus
+"if has('macunix')
+""  vmap <C-x> :!pbcopy<CR>
+""  vmap <Leader> :w !pbcopy<CR><CR>
+""  vmap <Leader>p :r !pbcopy<CR>
+"endif
+"
+" Search mappings: These will make it so that going to the next one in a
+" search will center on the line it's found in.
+nnoremap n nzzzv
+nnoremap N Nzzzv
 
-" ================ Custom Settings ========================
-let mapleader = " " " You only have 1000ms (by default) to hit the next key
+cnoreabbrev W! w!
+cnoreabbrev Q! q!
+cnoreabbrev Qall! qall!
+cnoreabbrev Wq wq
+cnoreabbrev Wa wa
+cnoreabbrev wQ wq
+cnoreabbrev WQ wq
+cnoreabbrev W w
+cnoreabbrev Q q
+cnoreabbrev Qall qall
 
+"# =================== Behavior =====================
+"
+"
+set smartindent     "will look for { and indent accordingly
+set backspace=indent,eol,start				" fix backspace indent
 
-" Checks if "vim --version" has +clipboard. Otherwise unset line numbers
-" when before marking text
-if has("clipboard")
-    set mouse=a " ability to scroll, and mouse highlight symlinks to VISUAL
-    set clipboard=unnamed " copy to the system clipboard
+" Tabs
+"
+set tabstop=4		"stop at next column mod 4
+set expandtab 		"convert <Tab> to spaces
 
-    if has("unnamedplus") " X11 support
-        set clipboard+=unnamedplus
-    endif
-else
-    vmap <Leader>d :!pbcopy<CR>
-    vmap <Leader>y :w !pbcopy<CR><CR>
-    vmap <Leader>p :r !pbpaste<CR><CR>
+"" Remember cursor position
+augroup vimrc-remember-cursor-position
+  autocmd!
+  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+augroup END
+
+"# =================== Basic =====================
+"
+" Encoding
+if has("multi_byte")
+  if &termencoding == ""
+    let &termencoding = &encoding
+  endif
+  set encoding=utf-8
+  set fileencoding=utf-8
+  set fileencodings=utf-8
 endif
 
+set ttyfast
 
+set title " does not work
 
+"# =================== .vimrc modelines =====================
 
-" Go to pastemode
-set pastetoggle=<F10> " First insert mode, then toggle paste
-
-" ================ Commands ========================
-" No linenumbers
-" :se nonu
-"
-" Convert tabs to spaces
-" :%retab
-"
-" Use tabs
-" :se noet
-"
-"
-" ctrl - o : interrupts insertmode, to do exactly one normal command before
-" returning
-
-" https://stackoverflow.com/questions/1737163/traversing-text-in-insert-mode
-"
-"
-" ================= Plugins ===================
-" Plug 'scrooloose/nerdtree'                file explorer
-" Plug 'jistr/vim-nerdtree-tabs'            set all tabs with NERDTree
-" Plug 'tpope/vim-commentary'               comment/uncomment
-" Plug 'tpope/vim-fugitive'                 git! http://vimcasts.org/episodes/fugitive-vim---a-complement-to-command-line-git/
-" Plug 'vim-airline/vim-airline'            statusbar/tabline
-" Plug 'vim-airline/vim-airline-themes'
-" Plug 'airblade/vim-gitgutter'             git added/removed sign. undo? not unstage
-" Plug 'vim-scripts/grep.vim'               grep (search)
-" Plug 'vim-scripts/CSApprox'               colorsheme
-" Plug 'bronson/vim-trailing-whitespace'    redcolor trailing whitespace, and fix
-" Plug 'Raimondi/delimitMate'               autoclose paranthesis and brackets
-" Plug 'majutsushi/tagbar'                  method-overview
-" Plug 'scrooloose/syntastic'               syntax check
-" Plug 'Yggdroot/indentLine'                lines for indents
-" Plug 'avelino/vim-bootstrap-updater'      
-" Plug 'sheerun/vim-polyglot'               language packs
-"
-"
-" Plug 'junegunn/fzf'                       search
-" Plug 'Shougo/vimproc.vim'                 asynchronous execution library whatever that means
-"
-" Plug 'xolox/vim-misc'                     speed
-" Plug 'xolox/vim-session'                  save sessions
-" Plug 'Shougo/vimshell.vim'                shell, discontinued
-" Plug 'SirVer/ultisnips'                   auto add class def etc.
-" Plug 'honza/vim-snippets'                 more snippets
-" Plug 'tomasr/molokai'                     nice colorscheme
-"
-" A lot of language plugins
+" Fold with ATX style headers - "# is H1, "## is H2, and so on
+" vim:fdm=expr:fdl=0
+" vim:fde=getline(v\:lnum)=~'^"#'?'>'.(matchend(getline(v\:lnum),'"#*')-1)\:'='
