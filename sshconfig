@@ -1,0 +1,8 @@
+Host *
+ AddKeysToAgent yes
+ UseKeychain yes
+ IdentityFile ~/.ssh/id_rsa
+ ServerAliveInterval 50
+
+Host localhost u1c* u2c* u4c* u5c* t1c* t2c* t4c* t5c* s1c* s2c* s4c* s5c* p4c* p5c*
+ ForwardAgent yes
