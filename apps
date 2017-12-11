@@ -1,12 +1,96 @@
 #!/bin/bash
+#YAML?
+{
+    'installer': 'brew',
+    'install': 'tree'
+}
+
+- installer: brew
+  install: tree
+
+
+{
+    'name': 'vim',
+    'install_with': 'brew' | 'brew cask' | 'bash'
+    'installer': 'brew'
+    'flags': '--override-system-vim'
+    'requirements': [
+        'cmake',
+        'powerline tools'
+    ],
+    'pre_install': 'ls',
+    'post_install': 'pwd'
+},
+{
+    'name': 'zsh',
+    'installer': 'brew',
+    'requirements': [
+        'thefuck',
+        'powerline fonts'
+    ],
+    'post_install': 'chsh -s $(which zsh)'
+},
+{
+    'name': 'powerline fonts',
+    'installer': 'bash',
+    'pre_install': 'git clone https://github.com/powerline/fonts.git --depth=1 && cd fonts',
+    'install': './setup.sh',
+    'post_install': 'cd .. && rm -rf fonts'
+}
+
+iTerm
+chrome
+
+autojump # or fasd?
+
+Skim
+post_install: 'defaults write -app Skim SKTeXEditorPreset MacVim && defaults write -app Skim SKTeXEditorCommand mvim && defaults write -app Skim SKTeXEditorArguments "--remote-silent +'%line' '%file'"'
+"Fit window, click 'PDF' -> 'Use Current setting as deafault'"
+
+# Install brew
+
+errors=0
+
+if [ $(which brew) -eq 0 ];then
+    # REQUIRE BASH 4!!!
+    declare -A brew_formula
+    declare -A brew_cask
+
+    for formula in $(brew list -1); do
+        brew_formula[$formula]
+    done
+    for cask in $(brew cask list -1); do
+        brew_cask[$cask]
+    done
+else
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    #non bash 4 install
+fi
+
+# Installes brew formula if not already installed
+# Args:
+#   - command to check exit code of
+#   - command name and flags for brew install, if different than first arg
+brew_install () {
+    local formula=$1
+    local flags=$2  #decode list
+
+    if [ -z ${brew_formula[$formula]} ]; then
+        brew install $formula $flags > /tmp/formulaOutput
+    fi
+
+    if [ ! $? -eq 0 ]; then
+        errors+=1
+        cat /tmp/formulaOutput >> $HOME/essentials_install.log
+    fi
+}
+
+update() {
+    brew update && brew upgrade
+}
 
 # Vim
 brew install vim --with-clientserver --with-client-server --override-system-vim
-curl 'http://vim-bootstrap.com/generate.vim' --data 'langs=go&langs=python&langs=c&langs=javascript&langs=php&langs=html&langs=ruby&editor=vim' > ~/.vimrc
-
-ln -s vimrc.local ~/.vimrc.local
-ln -s vimrc.bundles.local ~/.vimrc.bundles.local
-
 
 brew cask install mactex #includes latexmk which are needed for compiling of latex
 
@@ -16,6 +100,7 @@ chsh -s /usr/local/bin/bash #needed?
 brew install kubectl docker-machine-driver-xhyve
 brew cask install minikube
 
+brew install cmake # YouCompleteMe vim-plugin
 
 # zsh
 

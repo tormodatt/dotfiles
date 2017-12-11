@@ -58,7 +58,7 @@ HIST_STAMPS="dd.mm.yyyy"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git osx thefuck aws colored-man-pages command-not-found common-aliases copybuffer docker-compose docker extract history-substring-search)
+plugins=(git osx thefuck aws colored-man-pages command-not-found common-aliases copybuffer docker-compose docker extract history-substring-search autojump)
 #safe-paste, vi, jira, cp, command-not-found, aws
 
 source $ZSH/oh-my-zsh.sh
@@ -66,13 +66,14 @@ source $ZSH/oh-my-zsh.sh
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
+export PATH="/opt/local/bin:$PATH"
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
+#    export EDITOR='vim'
 # else
 #   export EDITOR='mvim'
 # fi

@@ -23,22 +23,25 @@ if !filereadable(vimplug_exists)
 endif
 
 call plug#begin('~/.vim/plugged')
+
+" Update with :PlugUpdate [name], or force with :PlugUpdate! [name]
+
 " Visual
 Plug 'vim-airline/vim-airline'                          " powerline
 Plug 'vim-airline/vim-airline-themes'
 Plug 'majutsushi/tagbar'                                " class/function overview
 Plug 'airblade/vim-gitgutter'                           " show git diff in the 'gutter'
 Plug 'Yggdroot/indentLine'                              " show a line at indents
-Plug 'morhetz/gruvbox'					" color theme
+Plug 'morhetz/gruvbox'					                " color theme; REQUIRES powerline fonts
 
 " Writing efficiency
 Plug 'bronson/vim-trailing-whitespace'                  " show and remove trailing whitespace
 Plug 'Raimondi/delimitMate'                             " delimiters
 Plug 'tpope/vim-commentary'                             " comment/uncomment
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py' } " autocompleter; require CMake and xcode dev tools
 
 " Vim enhancement
 " Plug 'Shougo/vimproc.vim', {'do': 'make'}             " async exec library for vim
-
 
 " Misc
 Plug 'xolox/vim-misc'                                  " required for vim-notes
@@ -47,17 +50,10 @@ Plug 'xolox/vim-notes'                                 " notes
 " Language
 Plug 'sheerun/vim-polyglot'                            " solid language pack
 Plug 'scrooloose/syntastic'                            " syntax check
-"Plug 'lervag/vimtex'        " requires vim with client-server, and latexmk (included in MacTex)
-"
-"
-"
-"
-" Languages
-" Latex
+Plug 'lervag/vimtex'                                   " requires vim with client-server(for callback), and latexmk (included in MacTex)
 "
 " Test these
 "Plug 'tpope/vim-fugitive'                              " git wrapper
-"Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 "junegunn/fzf
 "tpope/vim-unimpaired
 
@@ -71,6 +67,7 @@ call plug#end()
 "## Gruvebox
 colorscheme gruvbox
 let g:gruvbox_contrast_dark = 'soft' " does it work?
+set background=dark
 
 "## NERDTree
 noremap <F3> :NERDTreeToggle<CR>
@@ -94,13 +91,26 @@ nmap <F8> :TagbarToggle<CR>
 let g:tagbar_autofocus = 1
 
 "## Vimtex
+"
 let g:vimtex_fold_enabled = 1
 let g:vimtex_indent_enabled = 1
+let g:polyglot_disabled = ['latex'] " otherwise vim-tex will not work properply
+
+let g:vimtex_view_method = 'skim'   " Set MacVim in Skim -> Pref -> Sync PDF-TeX Sync support
+" Forward search: \lv
+" Backward search: Command-Shift-Click on point in PDF in Skim
+
+nmap <F5> :VimtexTocToggle<CR>
+" :VimtexCountWords
+nmap <F6> :VimtexLabelsToggle<CR>
+" :VimtexCompileOutput
+" :VimtexErrors
+" :VimtexClean " clean *.aux, *.out etc.
 
 "## Indentline
 let g:indentLine_enabled = 1
 let g:indentLine_concealcursor = 0
-let g:indentLine_char = '@'    "'┆'
+let g:indentLine_char = '|'    "'┆'
 let g:indentLine_faster = 1
 
 "# =================== Visual =====================
@@ -108,6 +118,7 @@ let g:indentLine_faster = 1
 syntax on
 set number
 set relativenumber
+set guifont=Noto\ Mono\ for\ Powerline:h12 " Monaco:h12
 
 "# =================== Keymappings =====================
 "
@@ -127,12 +138,20 @@ vnoremap <silent> p p`]
 nnoremap <silent> p p`]
 
 "" Copy/paste
-set clipboard=unnamed,unnamedplus
-"if has('macunix')
-""  vmap <C-x> :!pbcopy<CR>
-""  vmap <Leader> :w !pbcopy<CR><CR>
-""  vmap <Leader>p :r !pbcopy<CR>
-"endif
+if has("clipboard")
+    set mouse=a " ability to scroll, and mouse highlight symlinks to VISUAL
+    set clipboard=unnamed " copy to the system clipboard
+
+    if has("unnamedplus") " X11 support
+        set clipboard+=unnamedplus
+    endif
+else
+    if has('macunix')
+        vmap <Leader>d :!pbcopy<CR>
+        vmap <Leader>y :w !pbcopy<CR><CR>
+        vmap <Leader>p :r !pbpaste<CR><CR>
+    endif
+endif
 "
 " Search mappings: These will make it so that going to the next one in a
 " search will center on the line it's found in.
@@ -153,12 +172,23 @@ cnoreabbrev Qall qall
 "# =================== Behavior =====================
 "
 "
-set smartindent     "will look for { and indent accordingly
-set backspace=indent,eol,start				" fix backspace indent
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+    " Use filetype detection and file-based automatic indenting.
+    filetype plugin indent on
+
+    " Use actual tab chars in Makefiles.
+    autocmd FileType make set tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
+endif
+"
+"set smartindent                             "will look for { and indent accordingly
+set backspace=indent,eol,start				" allow backspace in insert mode
 
 " Tabs
 "
-set tabstop=4		"stop at next column mod 4
+set tabstop=4		" The with of a <Tab> is set to 4
+set shiftwidth=4    " Indents will have a width of 4.
+set softtabstop=4   " Sets the number of columns for a TAB.
 set expandtab 		"convert <Tab> to spaces
 
 "" Remember cursor position
@@ -166,6 +196,13 @@ augroup vimrc-remember-cursor-position
   autocmd!
   autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 augroup END
+
+" ---- Search
+"
+set incsearch       " Find the next match as we type the search
+set hlsearch        " Highlight searches by default
+set ignorecase      " Ignore case when searching...
+set smartcase       " ...unless we type a capital
 
 "# =================== Basic =====================
 "
@@ -177,6 +214,14 @@ if has("multi_byte")
   set encoding=utf-8
   set fileencoding=utf-8
   set fileencodings=utf-8
+endif
+
+" Keep undo history across sessions, by storing in file.
+" Only works all the time.
+if has('persistent_undo') && !isdirectory(expand('~').'/.vim/backups')
+  silent !mkdir ~/.vim/backups > /dev/null 2>&1
+  set undodir=~/.vim/backups
+  set undofile
 endif
 
 set ttyfast
