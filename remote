@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# Usage:
+#
+# chmod +x ./init
+# 
+# echo "ForceCommand /path/to/this/script" > ~/.ssh/config
+
+VALID_USER="ttu"
+
+USER=$(whomi)
+
+if [ $USER == $VALID_USER ]; then
+    echo "Not valid user, will not copy dotfiles";
+    exit 0;
+fi
+
+# Download dotfiles from git

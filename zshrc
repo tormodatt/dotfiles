@@ -67,6 +67,7 @@ source $ZSH/oh-my-zsh.sh
 
 # export MANPATH="/usr/local/man:$MANPATH"
 export PATH="/opt/local/bin:$PATH"
+export PATH="/usr/local/sbin:$PATH"
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -96,3 +97,5 @@ export PATH="/opt/local/bin:$PATH"
 DEFAULT_USER="ttu"
 # prompt_context(){}
 #
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

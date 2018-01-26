@@ -42,6 +42,14 @@ iTerm
 chrome
 
 autojump # or fasd?
+gnupg
+pdwipe
+brew tap caskroom/fonts
+brew cask install font-hack-nerd-font
+brew install shpotify
+
+
+sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist # to initialize locate database
 
 Skim
 post_install: 'defaults write -app Skim SKTeXEditorPreset MacVim && defaults write -app Skim SKTeXEditorCommand mvim && defaults write -app Skim SKTeXEditorArguments "--remote-silent +'%line' '%file'"'

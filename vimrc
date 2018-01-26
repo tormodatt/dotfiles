@@ -39,23 +39,32 @@ Plug 'bronson/vim-trailing-whitespace'                  " show and remove traili
 Plug 'Raimondi/delimitMate'                             " delimiters
 Plug 'tpope/vim-commentary'                             " comment/uncomment
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py' } " autocompleter; require CMake and xcode dev tools
+Plug 'SirVer/ultisnips'                                 " snippets engine
+Plug 'honza/vim-snippets'                               " snippets
 
 " Vim enhancement
 " Plug 'Shougo/vimproc.vim', {'do': 'make'}             " async exec library for vim
 
 " Misc
 Plug 'xolox/vim-misc'                                  " required for vim-notes
-Plug 'xolox/vim-notes'                                 " notes
+"Plug 'xolox/vim-notes'                                 " notes
+" Plug 'vimwiki/vimwiki'
+Plug 'lervag/wiki'
 
 " Language
 Plug 'sheerun/vim-polyglot'                            " solid language pack
-Plug 'scrooloose/syntastic'                            " syntax check
+" Plug 'scrooloose/syntastic'                            " syntax check
+"
+Plug 'w0rp/ale'
 Plug 'lervag/vimtex'                                   " requires vim with client-server(for callback), and latexmk (included in MacTex)
+Plug 'fatih/vim-go'                                     " golang
 "
 " Test these
 "Plug 'tpope/vim-fugitive'                              " git wrapper
 "junegunn/fzf
 "tpope/vim-unimpaired
+"tpope/vim-repeat
+"terryma/vim-multiple-cursors
 
 call plug#end()
 
@@ -64,31 +73,56 @@ call plug#end()
 "# =================== Plugin specific =====================
 " config and keymappings
 "
+"## Airline
+let g:airline_powerline_fonts = 1
+"might want to disable airline.tagbar extention for speed
+
 "## Gruvebox
 colorscheme gruvbox
 let g:gruvbox_contrast_dark = 'soft' " does it work?
 set background=dark
 
+"## Indentline
+let g:indentLine_enabled = 1
+let g:indentLine_concealcursor = 0
+let g:indentLine_char = '|'    "'┆'
+let g:indentLine_faster = 1
+
 "## NERDTree
 noremap <F3> :NERDTreeToggle<CR>
-
-"## Airline
-let g:airline_powerline_fonts = 1
-"might want to disable airline.tagbar extention for speed
 
 "## Notes
 :let g:notes_directories = ['~/Documents/Notes']
 :let g:notes_suffix = '.md'
 
-"## Whitespace
-nmap <Leader>fw :FixWhitespace<CR>
 
 "## Syntastic
-nmap <Leader>sm :SyntasticToggleMode<CR>
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+let g:syntastic_error_symbol='✗'
+let g:syntastic_warning_symbol='⚠'
+let g:syntastic_style_error_symbol = '✗'
+let g:syntastic_style_warning_symbol = '⚠'
+
+nmap <Leader>st :SyntasticToggleMode<CR>
+" map :SyntasticCheck
 
 "## Tagbar
 nmap <F8> :TagbarToggle<CR>
 let g:tagbar_autofocus = 1
+
+"## UltiSnips
+let g:UltiSnipsExpandTrigger="<c-s>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+"let g:UltiSnipsEditSplit="vertical"
 
 "## Vimtex
 "
@@ -107,18 +141,91 @@ nmap <F6> :VimtexLabelsToggle<CR>
 " :VimtexErrors
 " :VimtexClean " clean *.aux, *.out etc.
 
-"## Indentline
-let g:indentLine_enabled = 1
-let g:indentLine_concealcursor = 0
-let g:indentLine_char = '|'    "'┆'
-let g:indentLine_faster = 1
+"## Whitespace
+nmap <Leader>fw :FixWhitespace<CR>
 
-"# =================== Visual =====================
+"## Wiki
+let g:wiki_root = '~/Documents/wiki'
+
+" Languages
 "
-syntax on
-set number
-set relativenumber
-set guifont=Noto\ Mono\ for\ Powerline:h12 " Monaco:h12
+"## vim-go
+let g:go_fmt_command = "goimports"          " also manage imports on save
+
+let godoc=expand('$GOPATH/bin/gogetdoc')
+if !filereadable(godoc)
+    :GoInstallBinaries
+endif
+
+"# =================== Basic =====================
+"
+" Encoding
+if has("multi_byte")
+  if &termencoding == ""
+    let &termencoding = &encoding
+  endif
+  set encoding=utf-8
+  set fileencoding=utf-8
+  set fileencodings=utf-8
+endif
+
+" Keep undo history across sessions, by storing in file.
+" Only works all the time.
+if has('persistent_undo') && !isdirectory(expand('~').'/.vim/backups')
+  silent !mkdir ~/.vim/backups > /dev/null 2>&1
+  set undodir=~/.vim/backups
+  set undofile
+endif
+
+set ttyfast
+
+set title " does not work
+
+"# =================== Behavior =====================
+"
+"
+
+set nocompatible " if .vimrc is not in ~/, this is needed
+
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+    " Use filetype detection and file-based automatic indenting.
+    filetype plugin indent on
+
+    " Use actual tab chars in Makefiles.
+    autocmd FileType make set tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
+endif
+"
+"set smartindent                             "will look for { and indent accordingly
+set backspace=indent,eol,start				" allow backspace in insert mode
+
+" Tabs
+"
+set tabstop=4		" The with of a <Tab> is set to 4
+set shiftwidth=4    " Indents will have a width of 4.
+set softtabstop=4   " Sets the number of columns for a TAB.
+set expandtab 		"convert <Tab> to spaces
+
+"" Remember cursor position
+augroup vimrc-remember-cursor-position
+  autocmd!
+  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+augroup END
+
+" Remember folds
+autocmd BufWinLeave *.* mkview
+autocmd BufWinEnter *.* silent loadview
+
+" ---- Search
+"
+set incsearch       " Find the next match as we type the search
+set hlsearch        " Highlight searches by default
+set ignorecase      " Ignore case when searching...
+set smartcase       " ...unless we type a capital
+
+" Div
+
+set updatetime=250
 
 "# =================== Keymappings =====================
 "
@@ -169,64 +276,16 @@ cnoreabbrev W w
 cnoreabbrev Q q
 cnoreabbrev Qall qall
 
-"# =================== Behavior =====================
+"# =================== Visual =====================
 "
-"
-" Only do this part when compiled with support for autocommands.
-if has("autocmd")
-    " Use filetype detection and file-based automatic indenting.
-    filetype plugin indent on
+syntax on
+set number
+" set relativenumber
+set guifont=Noto\ Mono\ for\ Powerline:h12 " Monaco:h12
 
-    " Use actual tab chars in Makefiles.
-    autocmd FileType make set tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
-endif
-"
-"set smartindent                             "will look for { and indent accordingly
-set backspace=indent,eol,start				" allow backspace in insert mode
-
-" Tabs
-"
-set tabstop=4		" The with of a <Tab> is set to 4
-set shiftwidth=4    " Indents will have a width of 4.
-set softtabstop=4   " Sets the number of columns for a TAB.
-set expandtab 		"convert <Tab> to spaces
-
-"" Remember cursor position
-augroup vimrc-remember-cursor-position
-  autocmd!
-  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-augroup END
-
-" ---- Search
-"
-set incsearch       " Find the next match as we type the search
-set hlsearch        " Highlight searches by default
-set ignorecase      " Ignore case when searching...
-set smartcase       " ...unless we type a capital
-
-"# =================== Basic =====================
-"
-" Encoding
-if has("multi_byte")
-  if &termencoding == ""
-    let &termencoding = &encoding
-  endif
-  set encoding=utf-8
-  set fileencoding=utf-8
-  set fileencodings=utf-8
-endif
-
-" Keep undo history across sessions, by storing in file.
-" Only works all the time.
-if has('persistent_undo') && !isdirectory(expand('~').'/.vim/backups')
-  silent !mkdir ~/.vim/backups > /dev/null 2>&1
-  set undodir=~/.vim/backups
-  set undofile
-endif
-
-set ttyfast
-
-set title " does not work
+"## Folds
+set foldmethod=indent   "fold based on indent
+set foldnestmax=1       "deepest fold is 3 levels
 
 "# =================== .vimrc modelines =====================
 
