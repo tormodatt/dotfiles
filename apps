@@ -98,7 +98,7 @@ update() {
 }
 
 # Vim
-brew install vim --with-clientserver --with-client-server --override-system-vim
+brew install vim
 
 brew cask install mactex #includes latexmk which are needed for compiling of latex
 
@@ -109,6 +109,8 @@ brew install kubectl docker-machine-driver-xhyve
 brew cask install minikube
 
 brew install cmake # YouCompleteMe vim-plugin
+brew install weechat --with-aspell --with-curl --with-python --with-perl --with-ruby --with-lua --with-guile
+
 
 # zsh
 
