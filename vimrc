@@ -159,6 +159,16 @@ let g:vimtex_view_method = 'skim'   " Set MacVim in Skim -> Pref -> Sync PDF-TeX
 " Forward search: \lv
 " Backward search: Command-Shift-Click on point in PDF in Skim
 
+
+let g:vimtex_quickfix_open_on_warning = 0
+
+" let g:vimtex_quickfix_latexlog = {
+"       \ 'overfull' : 0,
+"       \ 'underfull' : 0,
+"       \ 'packages' : {
+"       \   'default' : 0,
+"       \ },
+"       \}
 " :VimtexCountWords
 " :VimtexCompileOutput
 " :VimtexErrors
@@ -354,6 +364,9 @@ let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 
 " Enable italics
 highlight Comment cterm=italic
+
+" Hide scrollbars in MacVim
+set guioptions=
 
 "## Folds
 set foldmethod=indent   "fold based on indent

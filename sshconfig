@@ -1,8 +1,31 @@
 Host *
  AddKeysToAgent yes
- UseKeychain yes
+# UseKeychain yes
  IdentityFile ~/.ssh/id_rsa
  ServerAliveInterval 50
 
-Host localhost u1c* u2c* u4c* u5c* t1c* t2c* t4c* t5c* s1c* s2c* s4c* s5c* p4c* p5c*
- ForwardAgent yes
+TCPKeepAlive no
+ServerAliveInterval 20
+
+
+CanonicalizeHostname always
+CanonicalDomains eiendomsinfo.no
+
+
+Host 10.16.*.* 10.17.*.*
+	ForwardAgent yes
+	ProxyJump s2clogin2.eiendomsinfo.no
+
+Host localhost 127.0.0.1
+	ForwardAgent yes
+
+Host *.eiendomsinfo.no
+	ForwardAgent yes
+
+Host p*.eiendomsinfo.no s*.eiendomsinfo.no !s1clogin1.eiendomsinfo.no !s2clogin2.eiendomsinfo.no
+	ProxyJump s2clogin2.eiendomsinfo.no
+	ForwardAgent yes
+
+Host s1clogin1.eiendomsinfo.no s2clogin2.eiendomsinfo.no
+	LogLevel Quiet
+	ForwardAgent yes
