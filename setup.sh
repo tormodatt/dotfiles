@@ -14,6 +14,7 @@ declare -A dotfiles=( \
         [$(pwd)/ideavimrc]="$HOME/.ideavimrc" \
         [$(pwd)/skhdrc]="$HOME/.skhdrc" \
 
+        [$(pwd)/config.fish]="$HOME/.config/fish/config.fish" \
         )
 
 for sourcePath in "${!dotfiles[@]}"; do
