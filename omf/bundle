@@ -1,0 +1,4 @@
+package autojump
+package fzf-autojump
+theme bobthefish
+theme default

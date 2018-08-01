@@ -15,6 +15,9 @@ declare -A dotfiles=( \
         [$(pwd)/skhdrc]="$HOME/.skhdrc" \
 
         [$(pwd)/config.fish]="$HOME/.config/fish/config.fish" \
+        [$(pwd)/omf/bundle]="$HOME/.config/omf/bundle" \
+        [$(pwd)/omf/theme]="$HOME/.config/omf/theme" \
+
         )
 
 for sourcePath in "${!dotfiles[@]}"; do
